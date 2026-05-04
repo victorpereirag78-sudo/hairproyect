@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  password     String
+  name         String
+  role         String         @default("owner") // owner, staff
+  salonId      String?
+  salon        Salon?         @relation("SalonStaff", fields: [salonId], references: [id])
+  ownedSalon   Salon?         @relation("SalonOwner")
+  appointments Appointment[]
+  notifications Notification[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Salon {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  openTime  String   @default("09:00")
+  closeTime String   @default("19:00")
+  workDays  String   @default("1,2,3,4,5") // 0=Sun, 1=Mon...6=Sat
+  ownerId   String   @unique
+  owner     User     @relation("SalonOwner", fields: [ownerId], references: [id])
+  staff     User[]   @relation("SalonStaff")
+  clients   Client[]
+  services  Service[]
+  automations Automation[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id          String       @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  status      String       @default("new") // new, recurring, inactive
+  notes       String?
+  preferences String?      // JSON string for preferences
+  source      String?      // walk-in, referral, social, etc.
+  salonId     String
+  salon       Salon        @relation(fields: [salonId], references: [id])
+  appointments Appointment[]
+  clientNotes ClientNote[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("clients")
+}
+
+model Service {
+  id                 String              @id @default(cuid())
+  name               String
+  duration           Int                 // in minutes
+  price              Float
+  category           String?             // haircut, color, treatment, etc.
+  active             Boolean             @default(true)
+  salonId            String
+  salon              Salon               @relation(fields: [salonId], references: [id])
+  appointmentServices AppointmentService[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@map("services")
+}
+
+model Appointment {
+  id           String              @id @default(cuid())
+  date         DateTime
+  startTime    String              // "09:00"
+  endTime      String              // "10:00"
+  status       String              @default("scheduled") // scheduled, confirmed, completed, cancelled, no_show
+  notes        String?
+  clientId     String
+  client       Client              @relation(fields: [clientId], references: [id])
+  staffId      String?
+  staff        User?               @relation(fields: [staffId], references: [id])
+  salonId      String
+  services     AppointmentService[]
+  reminderSent Boolean             @default(false)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@map("appointments")
+}
+
+model AppointmentService {
+  id            String      @id @default(cuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  serviceId     String
+  service       Service     @relation(fields: [serviceId], references: [id])
+
+  @@unique([appointmentId, serviceId])
+  @@map("appointment_services")
+}
+
+model ClientNote {
+  id        String   @id @default(cuid())
+  content   String
+  type      String   @default("general") // general, preference, alert
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("client_notes")
+}
+
+model Automation {
+  id        String   @id @default(cuid())
+  name      String
+  type      String   // reminder, inactive_recovery, loyalty, birthday
+  active    Boolean  @default(true)
+  config    String   // JSON string with automation config
+  salonId   String
+  salon     Salon    @relation(fields: [salonId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("automations")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   @default("info") // info, warning, alert, success
+  read      Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
