@@ -24,7 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 
 interface NotificationItem {
   id: string
@@ -58,31 +58,36 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
 
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const res = await fetch('/api/notifications')
-      if (res.ok) {
-        const data = await res.json()
-        setNotifications(data)
-        setUnreadCount(data.filter((n: NotificationItem) => !n.read).length)
-      }
-    } catch (e) {
-      console.error('Failed to fetch notifications', e)
-    }
-  }, [])
-
   useEffect(() => {
-    if (user) {
-      const timeout = setTimeout(() => {
-        fetchNotifications()
-      }, 0)
-      const interval = setInterval(fetchNotifications, 30000)
-      return () => {
-        clearTimeout(timeout)
-        clearInterval(interval)
+    if (!user) return
+
+    let active = true
+    const load = async () => {
+      try {
+        const res = await fetch('/api/notifications')
+        if (!active) return
+        if (res.ok) {
+          const data = await res.json()
+          setNotifications(data)
+          setUnreadCount(data.filter((n: NotificationItem) => !n.read).length)
+        } else if (res.status === 401) {
+          setNotifications([])
+          setUnreadCount(0)
+          logout()
+          setCurrentView('landing')
+        }
+      } catch {
+        // Network error, skip
       }
     }
-  }, [user, fetchNotifications])
+
+    load()
+    const interval = setInterval(load, 30000)
+    return () => {
+      active = false
+      clearInterval(interval)
+    }
+  }, [user, logout, setCurrentView])
 
   const handleLogout = async () => {
     try {

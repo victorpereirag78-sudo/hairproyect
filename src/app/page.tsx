@@ -1,6 +1,7 @@
 'use client'
 
-import { useAppStore, ViewType } from '@/lib/store'
+import { useEffect } from 'react'
+import { useAppStore } from '@/lib/store'
 import { AppLayout } from '@/components/crm/shared/AppLayout'
 import { LandingPage } from '@/components/crm/landing/LandingPage'
 import { LoginForm } from '@/components/crm/auth/LoginForm'
@@ -37,7 +38,27 @@ function ViewRouter() {
 }
 
 export default function Home() {
-  const { currentView, isAuthenticated } = useAppStore()
+  const { currentView, isAuthenticated, user, logout, setCurrentView, login } = useAppStore()
+
+  // Verify session on app load when Zustand says authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      fetch('/api/auth/me')
+        .then((res) => {
+          if (res.ok) return res.json()
+          throw new Error('Session invalid')
+        })
+        .then((sessionUser) => {
+          // Update user data from server
+          login(sessionUser)
+        })
+        .catch(() => {
+          // Session cookie invalid - logout
+          logout()
+          setCurrentView('landing')
+        })
+    }
+  }, [isAuthenticated, user, logout, setCurrentView, login])
 
   // Unauthenticated views
   if (!isAuthenticated) {

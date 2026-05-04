@@ -177,67 +177,86 @@ export function LandingPage() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-amber-200/30 to-transparent rounded-full blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-36">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="text-center max-w-3xl mx-auto"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 text-rose-700 text-sm font-medium mb-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+              className="text-center lg:text-left"
             >
-              <Sparkles className="h-4 w-4" />
-              El CRM #1 para peluquerías en Latinoamérica
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 text-rose-700 text-sm font-medium mb-8"
+              >
+                <Sparkles className="h-4 w-4" />
+                El CRM #1 para peluquerías en Latinoamérica
+              </motion.div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                Tu peluquería,{' '}
+                <span className="gradient-text">gestionada con inteligencia</span>
+              </h1>
+
+              <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                Reservas automáticas, fidelización de clientes y métricas en tiempo real.
+                Todo lo que necesitas para hacer crecer tu negocio de belleza.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => setCurrentView('register')}
+                  className="bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white border-0 shadow-xl shadow-rose-500/25 text-base px-8 h-12"
+                >
+                  Comenzar gratis
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => setCurrentView('login')}
+                  className="text-base px-8 h-12 border-gray-300"
+                >
+                  Iniciar sesión
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-center lg:justify-start gap-6 mt-10 text-sm text-gray-500">
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-500" />
+                  Sin tarjeta de crédito
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-500" />
+                  14 días gratis
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-500" />
+                  Cancela cuando quieras
+                </div>
+              </div>
             </motion.div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Tu peluquería,{' '}
-              <span className="gradient-text">gestionada con inteligencia</span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Reservas automáticas, fidelización de clientes y métricas en tiempo real.
-              Todo lo que necesitas para hacer crecer tu negocio de belleza.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={() => setCurrentView('register')}
-                className="bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white border-0 shadow-xl shadow-rose-500/25 text-base px-8 h-12"
-              >
-                Comenzar gratis
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => setCurrentView('login')}
-                className="text-base px-8 h-12 border-gray-300"
-              >
-                Iniciar sesión
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-6 mt-10 text-sm text-gray-500">
-              <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Sin tarjeta de crédito
+            {/* Hero Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+              className="hidden lg:block"
+            >
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-br from-rose-200/40 to-amber-200/40 rounded-3xl blur-2xl" />
+                <img
+                  src="/hero-salon.png"
+                  alt="Interior de peluquería moderna gestionada con Glossy CRM"
+                  className="relative rounded-2xl shadow-2xl shadow-rose-200/30 w-full object-cover"
+                />
               </div>
-              <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
-                14 días gratis
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
-                Cancela cuando quieras
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
