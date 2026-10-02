@@ -144,7 +144,7 @@ export function LoginForm() {
             </form>
           </CardContent>
 
-          <CardFooter className="justify-center">
+          <CardFooter className="flex-col justify-center gap-3">
             <p className="text-sm text-gray-500">
               ¿No tienes cuenta?{' '}
               <button
@@ -154,6 +154,14 @@ export function LoginForm() {
                 Registrarse
               </button>
             </p>
+            <a
+              href="https://armsistemas.cl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-gray-400 hover:text-rose-600 transition-colors"
+            >
+              App desarrollada por ARM Sistemas
+            </a>
           </CardFooter>
         </Card>
       </motion.div>
